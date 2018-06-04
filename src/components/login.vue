@@ -1,14 +1,14 @@
 <template>
     <el-form :model="form" label-width="80px" class="form" label-position="top">
         <h2>用户登录</h2>
-        <el-form-item label="活动名称" >
-            <el-input v-model="form.name"></el-input>
+        <el-form-item label="用户名" >
+            <el-input v-model="form.username"></el-input>
         </el-form-item>
-        <el-form-item label="活动名称">
-            <el-input v-model="form.name"></el-input>
+        <el-form-item label="密码">
+            <el-input @keyup.enter.native="headleLogin" type="password" v-model="form.password"></el-input>
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="onSubmit">登录</el-button>
+            <el-button type="submit" @click="headleLogin">登录</el-button>
             <el-button>取消</el-button>
         </el-form-item>
     </el-form>
@@ -16,13 +16,32 @@
 
 <script>
 export default {
-    data() {
-        return {
-            form: {
-
-            }
-        }
+  data() {
+    return {
+      form: {
+        username: '',
+        password: ''
+      }
+    };
+  },
+  methods: {
+    headleLogin() {
+      this.$http.post('login', this.form)
+        .then((res) => {
+          const data = res.data;
+          if(data.meta.status === 200){
+              this.$root.directives = '/';
+              sessionStorage.setItem('token', data.data.token);
+              this.$message.success('登录成功 !');
+          }else {
+              this.$message.error('登录失败 !');
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
+  }
 };
 </script>
 
