@@ -10,6 +10,16 @@
 
 <script>
 export default {
+  beforeCreate() {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      // 跳转会登录页面并且提示
+      this.$router.push({
+        name: 'login'
+      });
+      this.$message.error('请先登录 !');
+    }
+  }
 };
 </script>
 

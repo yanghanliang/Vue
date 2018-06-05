@@ -30,15 +30,15 @@ export default {
     async headleLogin() {
       const res = await this.$http.post('login', this.form);
       const data = res.data;
-      if(data.meta.status === 200){
+      if (data.meta.status === 200) {
         sessionStorage.setItem('token', data.data.token);
         this.$message.success('登录成功 !');
         this.$router.push({
           name: 'home'
         });
-      }else {
+      } else {
         this.$message.error('登录失败 !');
-      }        
+      }
     }
   }
 };
