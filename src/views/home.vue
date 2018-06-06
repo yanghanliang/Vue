@@ -33,7 +33,7 @@
                 <i class="el-icon-location"></i>
                 <span>用户管理</span>
                 </template>
-                <el-menu-item index="1-1">
+                <el-menu-item index="/users">
                 <i class="el-icon-setting"></i>
                     用户列表
                 </el-menu-item>
@@ -169,6 +169,6 @@ export default {
 }
 
 .main {
-    background-color: #fff;
+    background-color: rgb(155, 163, 167);
 }
 </style>

@@ -11,11 +11,18 @@ import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/css/index.css';
 // 导入自己写的myaxios插件
 import MyAxios from '@/plugins/myaxios';
+// 导入moment
+import moment from 'moment';
 
 // 全局配置ElementUI
 Vue.use(ElementUI);
 // 注册
 Vue.use(MyAxios);
+
+// 格式化日期的过滤器
+Vue.filter('fmtDate', (value, fmtStr) => {
+  return moment(value).format(fmtStr);
+});
 
 Vue.config.productionTip = false;
 
