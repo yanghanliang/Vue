@@ -3,10 +3,10 @@
       <el-form :model="form" label-width="80px" class="form" label-position="top">
           <h2>用户登录</h2>
           <el-form-item label="用户名" >
-              <el-input v-model="form.username"></el-input>
+              <el-input v-model="form.username" autofocus="autofocus" placeholder='请输入用户名'></el-input>
           </el-form-item>
           <el-form-item label="密码">
-              <el-input @keyup.enter.native="headleLogin" type="password" v-model="form.password"></el-input>
+              <el-input @keyup.enter.native="headleLogin" type="password" v-model="form.password" placeholder='请输入密码'></el-input>
           </el-form-item>
           <el-form-item>
               <el-button type="submit" @click="headleLogin">登录</el-button>

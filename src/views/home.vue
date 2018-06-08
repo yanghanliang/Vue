@@ -27,7 +27,7 @@
         :router="true"
         default-active="2"
         class="menu"
-        unique-opened="true">
+        :unique-opened="true">
             <el-submenu index="1">
                 <template slot="title">
                 <i class="el-icon-location"></i>

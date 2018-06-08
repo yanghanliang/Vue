@@ -14,16 +14,42 @@
                     <el-input placeholder="请输入内容" v-model="searchKey" class="search" clearable>
                         <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
                     </el-input>
-                    <el-button type="primary" plain>添加用户</el-button>
+
+                    <el-button @click="addUsers" type="primary" plain>添加用户</el-button>
+                    <el-dialog title="添加用户" :visible.sync="addUserDialogVisible">
+                        <el-form ref="addUserForm" :model="form" :rules="rules" label-width="100px">
+                            <el-form-item label="用户名" prop="username">
+                            <el-input v-model="form.username" autofocus="autofocus" auto-complete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item label="密码" prop="password">
+                            <el-input v-model="form.password" type="password" auto-complete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item label="邮箱">
+                            <el-input v-model="form.email" type="email" auto-complete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item label="手机号">
+                            <el-input v-model="form.mobile" type="mobile" auto-complete="off"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="cancel('addUserForm')">取 消</el-button>
+                            <el-button type="primary" @click="handleAdd">确 定</el-button>
+                        </div>
+                    </el-dialog>
                     </div>
                 </div>
             </el-col>
         </el-row>
         <!-- 表格 -->
         <el-table
+            v-loading="loading"
+            element-loading-text="拼命加载中"
+            element-loading-spinner="el-icon-loading"
+            element-loading-background="rgba(0, 0, 0, 0.8)"
             :data="tableData"
             stripe
-            border
+            :border="true"
+            height="300"
             style="width: 100%; margin-top: 15px;">
             <el-table-column
             type="index"
@@ -63,16 +89,18 @@
             </el-table-column>
             <el-table-column label="操作" width="190">
                 <template slot-scope="scope">
+                    <!-- 修改 -->
                     <el-button
+                    @click="handleEdit(scope.row)"
                     size="mini"
                     icon="el-icon-edit">
-                    <!-- 修改 -->
                     </el-button>
+                    <!-- 删除 -->
                     <el-button
+                    @click="handleDelete(scope.row.id)"
                     size="mini"
                     type="danger"
                     icon="el-icon-delete">
-                    <!-- 删除 -->
                     </el-button>
                     <el-button
                     size="mini"
@@ -92,6 +120,24 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="total">
         </el-pagination>
+        <!-- 修改用户信息 -->
+        <el-dialog title="修改用户" :visible.sync="editUserDialogVisible">
+            <el-form ref="editUserForm" :model="form" :rules="rules" label-width="100px">
+                <el-form-item label="用户名" prop="username">
+                <el-input disabled v-model="form.username" autofocus="autofocus" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱">
+                <el-input v-model="form.email" type="email" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="手机号">
+                <el-input v-model="form.mobile" type="mobile" auto-complete="off"></el-input>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+                <el-button @click="editUserDialogVisible = false;">取 消</el-button>
+                <el-button type="primary" @click="handleUpdata">确 定</el-button>
+            </div>
+        </el-dialog>
     </el-card>
 </template>
 
@@ -101,9 +147,28 @@ export default {
     return {
       tableData: [],
       pagenum: 1,
-      pagesize: 10,
-      total: 0,
-      searchKey: ''
+      pagesize: 2,
+      total: 0, // 总条数
+      searchKey: '',
+      addUserDialogVisible: false,
+      editUserDialogVisible: false,
+      form: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      },
+      loading: true,
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' },
+          { min: 3, max: 5, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
+        ]
+      }
     };
   },
   // 组件创建完毕,能够访问data的成员
@@ -111,9 +176,81 @@ export default {
     this.loadData();
   },
   methods: {
+    // 修改数据
+    async handleUpdata() {
+      const { data } = await this.$http.put(`users/${this.form.id}`, {
+        email: this.form.email,
+        mobile: this.form.mobile
+      });
+
+      if (data.meta.status === 200) {
+        this.$message.success('修改成功 !');
+        this.loadData();
+        this.editUserDialogVisible = false;
+      } else {
+        this.$message.error(data.meta.msg);
+      }
+    },
+    // 点击修改,打开对话框,填入数据
+    handleEdit(data) {
+      this.editUserDialogVisible = true;
+      this.form = data;
+    },
+    // 删除用户
+    handleDelete(id) {
+      this.$confirm('您是否确定删除此条数据 ?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        // 删除操作
+        const { data } = await this.$http.delete(`users/${id}`);
+        if (data.meta.status === 200) {
+          // 删除成功
+          this.$message.success('删除成功 !');
+          this.pagenum = 1;
+          // 重新加载数据
+          this.loadData();
+        } else {
+            // 删除失败
+            this.$message.error(data.meta.msg);
+        }
+      });
+    },
+    // 点击
+    cancel(addUserForm) {
+      this.$refs[addUserForm].clearValidate();
+      this.addUserDialogVisible = false;
+    },
+    // 添加用户
+    async handleAdd() {
+      // 验证表单
+      this.$refs.addUserForm.validate(async (valid) => {
+        if (!valid) {
+          this.$message.error('请完善内容 !');
+          return;
+        }
+        const { data } = await this.$http.post('users', this.form);
+        console.log(data.meta.status);
+        if (data.meta.status === 201) {
+          // 隐藏对话框
+          this.addUserDialogVisible = false;
+          // 重新渲染页面
+          this.loadData();
+          // 提示
+          this.$message.success(data.meta.msg);
+          // 清空原来的表单
+          for (let key in this.form) {
+            this.form[key] = '';
+          }
+        } else {
+          // 提示
+          this.$message.error(data.meta.msg);
+        }
+      });
+    },
     // 修改状态
     async handleChange(user) {
-    //   this.$http.put('',)
       const res = await this.$http.put(`users/${user.id}/state/${user.mg_state}`);
       const data = res.data;
       if (data.meta.status === 200) {
@@ -142,13 +279,20 @@ export default {
       this.loadData();
       console.log(`当前页码: ${val}`);
     },
+    // 页面加载的方法
     async loadData() {
+      // 显示加载效果
+      this.loading = true;
       // 获取登录以后的token
       const token = sessionStorage.getItem('token');
       //  axios发送请求的时候需要携带token
       this.$http.defaults.headers.common['Authorization'] = token;
 
       const res = await this.$http.get(`users?pagenum=${this.pagenum}&pagesize=${this.pagesize}&query=${this.searchKey}`);
+      // 请求已经结束
+      // 隐藏加载效果
+      this.loading = false;
+
       const data = res.data;
       if (data.meta.status === 200) {
         // 设置总共多少条数据
@@ -157,6 +301,10 @@ export default {
       } else {
         this.$message.error('获取数据失败');
       }
+    },
+    async addUsers() {
+      this.addUserDialogVisible = !this.addUserDialogVisible;
+      // const res = await this.$http.post('http://127.0.0.1:8888/api/private/v1/users', )
     }
   }
 };
