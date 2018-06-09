@@ -160,7 +160,7 @@
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="setRoleDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="setRoleDialogVisible = false">确 定</el-button>
+          <el-button type="primary" @click="handleSetRole">确 定</el-button>
         </div>
       </el-dialog>
     </el-card>
@@ -197,7 +197,8 @@ export default {
       },
       formRole: {
         username: '',
-        r_id: ''
+        r_id: '',
+        uid: ''
       },
       roles: []
     };
@@ -207,10 +208,25 @@ export default {
     this.loadData();
   },
   methods: {
-    // 分配角色
+    // 分配用户角色(权限)
+    async handleSetRole() {
+      console.log(this.formRole);
+      const { data } = await this.$http.put(`users/${this.formRole.uid}/role`, {
+        rid: this.formRole.r_id
+      });
+      if (data.meta.status === 200) {
+        this.setRoleDialogVisible = false;
+        this.$message.success('权限分配成功 !');
+      } else {
+        this.$message.error('权限分配失败 !');
+      }
+    },
+    // 查看分配角色(分配权限)
     async handleOpenSetRoleDialog(user) {
       this.setRoleDialogVisible = true;
+      // 记录点击的用户的用户名和id
       this.formRole.username = user.username;
+      this.formRole.uid = user.id;
       // 发送请求, 获取所有的角色
       const { data } = await this.$http.get('roles');
       this.roles = data.data;
