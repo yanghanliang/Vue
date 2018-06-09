@@ -102,7 +102,9 @@
                     type="danger"
                     icon="el-icon-delete">
                     </el-button>
+                    <!-- 分配权限 -->
                     <el-button
+                    @click="handleOpenSetRoleDialog(scope.row)"
                     size="mini"
                     type="success"
                     icon="el-icon-check">
@@ -138,6 +140,29 @@
                 <el-button type="primary" @click="handleUpdata">确 定</el-button>
             </div>
         </el-dialog>
+        <!-- 分配角色 -->
+        <el-dialog title="分配角色" :visible.sync="setRoleDialogVisible">
+        <el-form :model="formRole" label-width="100px">
+          <el-form-item label="用户名">
+            <el-input v-model="formRole.username" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="权限">
+            <el-select v-model="formRole.r_id">
+              <el-option label="请选择" :value="-1"></el-option>
+              <el-option
+              v-for="role in roles"
+              :key="role.id"
+              :label="role.roleName"
+              :value="role.id">
+              </el-option>
+            </el-select>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="setRoleDialogVisible = false">取 消</el-button>
+          <el-button type="primary" @click="setRoleDialogVisible = false">确 定</el-button>
+        </div>
+      </el-dialog>
     </el-card>
 </template>
 
@@ -152,6 +177,7 @@ export default {
       searchKey: '',
       addUserDialogVisible: false,
       editUserDialogVisible: false,
+      setRoleDialogVisible: false,
       form: {
         username: '',
         password: '',
@@ -168,7 +194,12 @@ export default {
           { required: true, message: '请输入密码', trigger: 'blur' },
           { min: 6, max: 15, message: '长度在 6 到 15 个字符', trigger: 'blur' }
         ]
-      }
+      },
+      formRole: {
+        username: '',
+        r_id: ''
+      },
+      roles: []
     };
   },
   // 组件创建完毕,能够访问data的成员
@@ -176,6 +207,17 @@ export default {
     this.loadData();
   },
   methods: {
+    // 分配角色
+    async handleOpenSetRoleDialog(user) {
+      this.setRoleDialogVisible = true;
+      this.formRole.username = user.username;
+      // 发送请求, 获取所有的角色
+      const { data } = await this.$http.get('roles');
+      this.roles = data.data;
+      // 根据用户的id 去请求用户对象,目的是获取角色的id
+      const { data: data1 } = await this.$http.get(`users/${user.id}`);
+      this.formRole.r_id = data1.data.rid;
+    },
     // 修改数据
     async handleUpdata() {
       const { data } = await this.$http.put(`users/${this.form.id}`, {
@@ -212,8 +254,8 @@ export default {
           // 重新加载数据
           this.loadData();
         } else {
-            // 删除失败
-            this.$message.error(data.meta.msg);
+          // 删除失败
+          this.$message.error(data.meta.msg);
         }
       });
     },
