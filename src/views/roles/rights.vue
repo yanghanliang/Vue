@@ -62,10 +62,4 @@ export default {
 </script>
 
 <style>
-.box-card {
-  width: 100;
-  height: 100%;
-  padding: 20px;
-  background-color: #fff;
-}
 </style>
