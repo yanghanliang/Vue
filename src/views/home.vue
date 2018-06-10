@@ -43,13 +43,13 @@
                 <i class="el-icon-location"></i>
                 <span>权限管理</span>
                 </template>
-                <el-menu-item index="1-1">
+                <el-menu-item index="roles">
                 <i class="el-icon-setting"></i>
                     角色列表
                 </el-menu-item>
-                <el-menu-item index="1-1">
+                <el-menu-item index="rights">
                 <i class="el-icon-setting"></i>
-                    权限管理
+                    权限列表
                 </el-menu-item>
             </el-submenu>
             <el-submenu index="3">
