@@ -13,3 +13,8 @@ body {
   padding: 20px;
   background-color: #fff;
 }
+
+/* 步骤条字体样式 */
+.el-step__title {
+    font-size: 12px !important;
+}

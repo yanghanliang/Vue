@@ -14,6 +14,9 @@ import MyAxios from '@/plugins/myaxios';
 // 导入moment
 import moment from 'moment';
 
+// 导入自己封装的面包屑组件
+import MyBreadcrumb from '@/components/mybreadcrumb';
+
 // 全局配置ElementUI
 Vue.use(ElementUI);
 // 注册
@@ -25,6 +28,9 @@ Vue.filter('fmtDate', (value, fmtStr) => {
 });
 
 Vue.config.productionTip = false;
+
+// 全局组件
+Vue.component(MyBreadcrumb.name, MyBreadcrumb);
 
 /* eslint-disable no-new */
 new Vue({

@@ -61,5 +61,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.box-card {
+  border-radius: 10px;
+}
 </style>

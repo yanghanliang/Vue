@@ -1,11 +1,7 @@
 <template>
   <el-card class="box-card">
     <!-- 面包屑 -->
-    <el-breadcrumb separator="/">
-      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item><a href="/">权限管理</a></el-breadcrumb-item>
-      <el-breadcrumb-item>角色列表</el-breadcrumb-item>
-    </el-breadcrumb>
+    <my-breadcrumb level1="权限管理" level2="权限列表"></my-breadcrumb>
     <el-row>
       <el-col :span="24" class="add_role">
         <el-button plain>添加角色</el-button>
@@ -188,7 +184,7 @@ export default {
       this.currentRoleId = role.id;
 
       // 获取当前角色的所有权限
-      function getCheckedKeys(role){
+      function getCheckedKeys (role) {
         const arr = [];
         (function fn(role) {
           role.children.forEach((item) => {
@@ -212,7 +208,7 @@ export default {
       const { data: resData } = await this.$http.post(`roles/${this.currentRoleId}/rights`, {
         rids: arr3
       });
-      if( resData.meta.status === 200 ) {
+      if (resData.meta.status === 200) {
         this.$message.success('权限分配成功 !');
         this.setRightsDialogVisible = false;
         this.loadData();
@@ -225,6 +221,11 @@ export default {
 </script>
 
 <style scoped>
+.box-card {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+}
 .add_role {
   margin: 15px 0;
 }
