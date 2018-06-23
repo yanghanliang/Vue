@@ -92,7 +92,7 @@ export default {
   },
   methods: {
     async loadData() {
-      const { data: { data: { total, goods: data } } } = await this.$http.get(`orders?pagenum=1&pagesize=10`);
+      const { data: { data: { goods: data } } } = await this.$http.get(`orders?pagenum=1&pagesize=10`);
       this.tableData = data;
     }
   }
