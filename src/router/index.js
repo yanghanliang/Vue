@@ -12,6 +12,10 @@ import Roles from '@/views/roles/roles';
 import Categories from '@/views/goods/categories';
 import Goods from '@/views/goods/goods';
 import GoodsAdd from '@/views/goods/goodsadd';
+import Params from '@/views/goods/params';
+
+import Orders from '@/views/orders/orders';
+import Reports from '@/views/reports/reports';
 
 // 导入element-ui 中的Message方法
 import { Message } from 'element-ui';
@@ -56,6 +60,21 @@ const router = new Router({
           name: 'goodsadd',
           path: 'goodsadd',
           component: GoodsAdd
+        },
+        {
+          name: 'params',
+          path: 'params',
+          component: Params
+        },
+        {
+          name: 'orders',
+          path: 'orders',
+          component: Orders
+        },
+        {
+          name: 'reports',
+          path: 'reports',
+          component: Reports
         }
       ]
     }

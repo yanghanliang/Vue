@@ -156,8 +156,6 @@ export default {
       if (meta.status === 200) {
         // 成功
         this.tableData = data;
-      } else {
-        this.$message.error(meta.msg);
       }
     },
     // 删除角色对应的权限
@@ -168,9 +166,6 @@ export default {
         // 删除成功
         this.$message.success('删除成功 !');
         role.children = data;
-      } else {
-        // 删除失败
-        this.$message.error(meta.msg);
       }
     },
     // 显示权限的对话框
@@ -212,8 +207,6 @@ export default {
         this.$message.success('权限分配成功 !');
         this.setRightsDialogVisible = false;
         this.loadData();
-      } else {
-        this.$message.error(resData.meta.msg);
       }
     }
   }

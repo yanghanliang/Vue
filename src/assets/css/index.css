@@ -18,3 +18,8 @@ body {
 .el-step__title {
     font-size: 12px !important;
 }
+
+/* 富文本框 */
+.ql-editor {
+    min-height: 300px;
+}

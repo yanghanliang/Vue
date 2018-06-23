@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { Message } from 'element-ui';
 
 const myaxios = {};
 myaxios.install = function(Vue) {
@@ -16,6 +17,21 @@ myaxios.install = function(Vue) {
       config.headers.Authorization = token;
     }
     return config;
+  }, function (error) {
+    // Do something with request error
+    return Promise.reject(error);
+  });
+
+  // 设置axios的拦截器
+  instance.interceptors.response.use(function (response) {
+    // 当获取到服务器的响应之后, 并且再交给请求动作之前
+    const { data: { meta: { status, msg } } } = response;
+
+    if (status !== 200 && status !== 201) {
+      Message.error(msg);
+    }
+
+    return response;
   }, function (error) {
     // Do something with request error
     return Promise.reject(error);
